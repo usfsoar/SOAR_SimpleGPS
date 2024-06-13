@@ -44,9 +44,10 @@ class MyServerCallbacks : public BLEServerCallbacks
 
 class MyCallbacks : public BLECharacteristicCallbacks
 {
+  // To receive data from phone/laptop/PWA
   void onWrite(BLECharacteristic *pCharacteristic)
   {
-    std::string value = pCharacteristic->getValue();
+    /*std::string value = pCharacteristic->getValue();
     if (value.length() > 0)
     {
       String value_str = "";
@@ -67,7 +68,7 @@ class MyCallbacks : public BLECharacteristicCallbacks
         Serial.println("I got other data");
       }
       
-    }
+    }*/
   }
 };
 
@@ -145,8 +146,10 @@ void loop() {
       else if(!strcmp(command, "GS")){
         decodeChar(decodedString, data, length);
         // Bluetooth sending
-        pCharacteristic->setValue(decodedString);
-        pCharacteristic->notify();
+        if (deviceConnected) {
+          pCharacteristic->setValue(decodedString);
+          pCharacteristic->notify();
+        }
         Serial.println(decodedString);
       }
       else{
