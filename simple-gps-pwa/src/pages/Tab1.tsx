@@ -57,11 +57,16 @@ const Tab1: React.FC = () => {
 		}
 	};
 
+	const handleIncomingData = (event: any) => {
+        const value = new TextDecoder().decode(event.target.value);
+        console.log("Received data:", value);
+    };
+
 	const connectToDevice = async () => {
 		try {
 			console.log("Requesting Bluetooth Device...");
 			const device = await navigator.bluetooth.requestDevice({
-				filters: [{name: "SOAR_SimpleGPS_Ground"}],
+				filters: [{name: "SOAR_L1 Tracker"}],
 				optionalServices: ["6e400001-b5a3-f393-e0a9-e50e24dcca9e"],
 			});
 
@@ -75,9 +80,11 @@ const Tab1: React.FC = () => {
 
 			console.log("Getting Characteristic...");
 			const characteristic = await service.getCharacteristic(characteristicUuid);
-
+			characteristic.startNotifications();
+            characteristic.addEventListener('characteristicvaluechanged', handleIncomingData);
 			setBleDevice(device);
 			setWriteCharacteristic(characteristic);
+			console.log("Connected");
 			setStatus("Connected");
 		} catch (error) {
 			console.error("Connection failed!", error);
