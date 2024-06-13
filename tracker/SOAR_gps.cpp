@@ -21,7 +21,7 @@ void SOAR_GPS::setup(){
 
 
 void SOAR_GPS::GET_NMEA(char* nmea, bool *ready, bool *failed){
-  #if FAKE_GPS
+  #if !FAKE_GPS
   char read = GPS->read();
   if(!GPS->newNMEAreceived()){
     *ready = false;
