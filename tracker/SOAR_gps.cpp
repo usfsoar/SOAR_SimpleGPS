@@ -1,8 +1,8 @@
 #include "SOAR_gps.h"
 
-SOAR_GPS::SOAR_GPS(int serial_bus, int TX, int RX) : 
+SOAR_GPS::SOAR_GPS(int serial_bus, int RX, int TX) : 
    RX_PIN(RX), TX_PIN(TX){
-    GPSSerial = new HardwareSerial(1);
+    GPSSerial = new HardwareSerial(serial_bus);
     GPS = new Adafruit_GPS(GPSSerial);
    }
 
@@ -21,7 +21,7 @@ void SOAR_GPS::setup(){
 
 
 void SOAR_GPS::GET_NMEA(char* nmea, bool *ready, bool *failed){
-  #if !FAKE_GPS
+  #if FAKE_GPS
   char read = GPS->read();
   if(!GPS->newNMEAreceived()){
     *ready = false;
@@ -44,13 +44,13 @@ void SOAR_GPS::GET_NMEA(char* nmea, bool *ready, bool *failed){
   for(char *p = gps_data; *p != '\0'; p++){
     if(*p == ','){
       comas++;
-      if(comas == 6){
+      if(comas == 2){
         continue; // Skip copying the comma itself
       }
     }
-    if(comas > 6 && comas < 10){
+    if(comas > 2 && comas < 7){
       *nmea++ = *p; // Copy data between the 7th and 10th commas
-    } else if(comas >= 10){
+    } else if(comas >= 7){
       break; // Stop copying after the 9th comma
     }
   }

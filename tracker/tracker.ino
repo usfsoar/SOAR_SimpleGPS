@@ -88,6 +88,8 @@ void loop() {
       else if(!strcmp(command, "GS")){
         lora.beginPacket();
         lora.sendChar("GS");
+        Serial.print("GPS info: ");
+        Serial.println(gps_nmea);
         lora.sendChar(gps_nmea);
         lora.endPacketWTime(6);
       }

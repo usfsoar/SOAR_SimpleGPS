@@ -29,13 +29,15 @@ void setup() {
   otaUpdater.Setup();
   lora.begin();
   lora.stringPacketWTime("WU",7);
+  // My idea
+  // lora.stringPacketWTime("GS", 7);
 }
 
 void loop() {
 
 
   // LoRa Beginif
-  int address, length, rssi, snr;
+  int address, length, rssi, snr; 
   byte *data;
   bool lora_available = lora.read(&address, &length, &data, &rssi, &snr);
   if (lora_available && length > 0 && lora.checkChecksum(data, length)) // A command is typically 2 bytes
