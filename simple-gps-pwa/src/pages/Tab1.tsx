@@ -49,13 +49,17 @@ const Tab1: React.FC = () => {
 		popupAnchor: [],
 	});
 
-	const handleDisplay = () => {
-		if (mapInstance.current) {
-			const newLatLng = new L.LatLng(coordinates.lat, coordinates.lng);
-			L.marker([newLatLng], {icon: my_icon}).addTo(mapInstance.current).bindPopup("New Location").openPopup();
-			mapInstance.current.setView(newLatLng, 13);
-		}
-	};
+	
+  const handleDisplay = () => {
+    if (mapInstance.current) {
+      const newLatLng = new L.LatLng(coordinates.lat, coordinates.lng);
+      L.marker(newLatLng).addTo(mapInstance.current)
+        .bindPopup('New Location')
+        .openPopup();
+      mapInstance.current.setView(newLatLng, 13);
+    }
+  };
+
 
 	const handleIncomingData = (event: any) => {
         const value = new TextDecoder().decode(event.target.value);
