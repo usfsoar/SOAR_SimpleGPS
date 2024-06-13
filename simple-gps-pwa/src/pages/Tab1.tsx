@@ -73,17 +73,20 @@ const Tab1: React.FC = () => {
 			console.log("Connecting to GATT Server...");
 			const server = await device.gatt.connect();
 			const serviceUuid = "6e400001-b5a3-f393-e0a9-e50e24dcca9e";
+			const notifyCharacteristicUuid = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
 			const characteristicUuid = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 
 			console.log("Getting Service...");
 			const service = await server.getPrimaryService(serviceUuid);
-
 			console.log("Getting Characteristic...");
 			const characteristic = await service.getCharacteristic(characteristicUuid);
-			characteristic.startNotifications();
-            characteristic.addEventListener('characteristicvaluechanged', handleIncomingData);
-			setBleDevice(device);
 			setWriteCharacteristic(characteristic);
+			setBleDevice(device);
+			
+			const notifyCharacteristic = await service.getCharacteristic(notifyCharacteristicUuid);
+			notifyCharacteristic.startNotifications();
+            notifyCharacteristic.addEventListener('characteristicvaluechanged', handleIncomingData);
+
 			console.log("Connected");
 			setStatus("Connected");
 		} catch (error) {

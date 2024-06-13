@@ -107,6 +107,8 @@ void setup() {
   Serial.println("Waiting a client connection to notify...");
 }
 
+unsigned long prevTime = 0;
+unsigned long interval = 5000;
 void loop() {
 
   // Disconnecting
@@ -125,7 +127,14 @@ void loop() {
     oldDeviceConnected = deviceConnected;
   }
 
-
+  if(millis()-prevTime > interval){
+    if (deviceConnected) {
+          pCharacteristic->setValue("ping");
+          pCharacteristic->notify();
+          Serial.println("Sending");
+        }
+        prevTime = millis();
+  }
 
   // LoRa Beginif
   int address, length, rssi, snr; 
