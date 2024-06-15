@@ -53,7 +53,7 @@ const Tab1: React.FC = () => {
 
 	
   const handleDisplay = () => {
-    if (mapInstance.current) {
+    if (mapInstance.current && displayOnUpdate) {
       const newLatLng = new L.LatLng(coordinates.lat, coordinates.lng);
       L.marker(newLatLng).addTo(mapInstance.current)
         .bindPopup('New Location')
@@ -111,7 +111,7 @@ const Tab1: React.FC = () => {
 			// handleCoordinateChange
 			// coordinates.lng = long_deg;
 
-			if (mapInstance.current) {
+			if (mapInstance.current && displayOnUpdate) {
 
 				const newLatLng = new L.LatLng(lat_deg, long_deg);
 				L.marker(newLatLng).addTo(mapInstance.current)
@@ -160,11 +160,15 @@ const Tab1: React.FC = () => {
 		}
 	};
 
+	useEffect(()=>{
+		console.log(displayOnUpdate);
+	}, [displayOnUpdate])
+
 	return (
 		<IonPage>
 			<IonHeader>
 				<IonToolbar>
-					<IonTitle>Tab 1</IonTitle>
+					<IonTitle>Locate GPS</IonTitle>
 				</IonToolbar>
 			</IonHeader>
 			<IonContent fullscreen>
@@ -177,9 +181,9 @@ const Tab1: React.FC = () => {
 					Connect To LORA Receiver
 				</IonButton>
 
-				<IonToggle checked={true} onIonChange={(e) => {
+				<IonToggle checked={displayOnUpdate} onIonChange={(e) => {
 					setDisplayOnUpdate(e.detail.checked)
-				}}>Checked Toggle</IonToggle>
+				}}>Display On Update</IonToggle>
 
 
 				<ExploreContainer name="Tab 1 page" />
