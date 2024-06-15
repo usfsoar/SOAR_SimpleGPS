@@ -72,11 +72,13 @@ const Tab1: React.FC = () => {
 		const value = new TextDecoder().decode(event.target.value);
 		console.log("Received data:", value);
 		// Value can be either ping or GPS data
+		var newHistory = loraHistory;
 		var newLog:LoraLog = {
 			time: new Date().toUTCString(),
 			gps_string: value
 		}
-		setLoraHistory([...loraHistory,newLog]);
+		newHistory.push(newLog);
+		setLoraHistory(newHistory);
 		// 1. Determine if value is gps data or not
 		// if starts with "GS" then its GPS
 		if (value.slice(0, 2) == "GS") {
