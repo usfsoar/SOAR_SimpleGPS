@@ -62,9 +62,57 @@ const Tab1: React.FC = () => {
 
 
 	const handleIncomingData = (event: any) => {
-        const value = new TextDecoder().decode(event.target.value);
-        console.log("Received data:", value);
-    };
+		const value = new TextDecoder().decode(event.target.value);
+		console.log("Received data:", value);
+		// Value can be either ping or GPS data
+
+		// 1. Determine if value is gps data or not
+		// if starts with "GS" then its GPS
+		if (value.slice(0, 2) == "GS") {
+			console.log(value);
+			// 2. If it is GPS, then extract latitude and longitude
+			// Sift and slice string by the commas
+			// GS,2805.5864,N,08210.5440,W
+			// let value = "GS,2805.5864,N,08210.5440,W"
+			let lat_deg = parseFloat(value.slice(3, 5));
+			let lat_min = parseFloat(value.slice(5, 12));
+			let lat_dir = value.slice(13, 14);
+			let long_deg = parseFloat(value.slice(15, 18));
+			let long_min = parseFloat(value.slice(18, 25));
+			let long_dir = value.slice(26, 27);
+			// console.log(`GPS in DDMM.MMMM, DDDMM.MMMM: \nLatitude: \n${lat_deg}\n${lat_min}\n${lat_dir}\n\nLongitude: \n${long_deg}\n${long_min}\n${long_dir}`);
+
+			lat_min = lat_min / 60; 
+			lat_deg = lat_deg + lat_min;
+            if (lat_dir == "N") {
+                lat_min = lat_min * 1;
+            };
+            if (lat_dir == "S") {
+                lat_min = lat_min * -1;
+            };
+
+            long_min = long_min / 60;
+            long_deg = long_deg + long_min;
+            if (long_dir == "E") {
+                long_deg = long_deg * 1;
+            };
+            if (long_dir == "W") {
+                long_deg = long_deg * -1;
+
+            };
+
+			console.log(`GPS in DD.DDDD, DD.DDDD: \nLatitude:   ${lat_deg}\nLongitude: ${long_deg}`);
+
+			// 3. Display lat/long on map
+			// Stuff that I (Pavan) is working on as of 9:21 PM EDT June 14 2024
+			// coordinates.lat = lat_deg;
+			// handleCoordinateChange
+			// coordinates.lng = long_deg;
+			
+		}
+
+		
+	};
 
 	const connectToDevice = async () => {
 		try {
@@ -86,10 +134,10 @@ const Tab1: React.FC = () => {
 			const characteristic = await service.getCharacteristic(characteristicUuid);
 			setWriteCharacteristic(characteristic);
 			setBleDevice(device);
-			
+
 			const notifyCharacteristic = await service.getCharacteristic(notifyCharacteristicUuid);
 			notifyCharacteristic.startNotifications();
-            notifyCharacteristic.addEventListener('characteristicvaluechanged', handleIncomingData);
+			notifyCharacteristic.addEventListener("characteristicvaluechanged", handleIncomingData);
 
 			console.log("Connected");
 			setStatus("Connected");
