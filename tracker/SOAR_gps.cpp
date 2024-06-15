@@ -1,3 +1,4 @@
+#include "_config.h"
 #include "SOAR_gps.h"
 
 SOAR_GPS::SOAR_GPS(int serial_bus, int RX, int TX) : 
@@ -40,6 +41,7 @@ void SOAR_GPS::GET_NMEA(char* nmea, bool *ready, bool *failed){
 
   #endif
 
+  Serial.println(gps_data);
   int comas = 0;
   for(char *p = gps_data; *p != '\0'; p++){
     if(*p == ','){
