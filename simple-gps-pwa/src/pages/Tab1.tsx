@@ -112,7 +112,7 @@ const Tab1: React.FC = () => {
 			// coordinates.lng = long_deg;
 
 			if (mapInstance.current && displayOnUpdate) {
-
+				setCoordinates({lat: lat_deg, lng:long_deg});
 				const newLatLng = new L.LatLng(lat_deg, long_deg);
 				L.marker(newLatLng).addTo(mapInstance.current)
 				  .bindPopup('New Location')
