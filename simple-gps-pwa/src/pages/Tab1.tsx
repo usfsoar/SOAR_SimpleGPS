@@ -1,9 +1,10 @@
-import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonItem, IonLabel} from "@ionic/react";
+import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonItem, IonLabel, IonToggle} from "@ionic/react";
 import {useEffect, useRef, useState} from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import ExploreContainer from "../components/ExploreContainer";
 import "./Tab1.css";
+
 
 const Tab1: React.FC = () => {
 	const mapRef = useRef(null);
@@ -12,6 +13,7 @@ const Tab1: React.FC = () => {
 	const [bleDevice, setBleDevice] = useState(null);
 	const [writeCharacteristic, setWriteCharacteristic] = useState(null);
 	const [status, setStatus] = useState("Disconnected");
+	const [displayOnUpdate, setDisplayOnUpdate] = useState(true);
 
 	useEffect(() => {
 		if (mapRef.current && !mapInstance.current) {
@@ -108,6 +110,17 @@ const Tab1: React.FC = () => {
 			// coordinates.lat = lat_deg;
 			// handleCoordinateChange
 			// coordinates.lng = long_deg;
+
+			if (mapInstance.current) {
+
+				const newLatLng = new L.LatLng(lat_deg, long_deg);
+				L.marker(newLatLng).addTo(mapInstance.current)
+				  .bindPopup('New Location')
+				  .openPopup();
+				if(displayOnUpdate == true) {
+					mapInstance.current.setView(newLatLng, 13);
+				};
+			  }
 			
 		}
 
@@ -163,6 +176,12 @@ const Tab1: React.FC = () => {
 				<IonButton expand="block" onClick={connectToDevice}>
 					Connect To LORA Receiver
 				</IonButton>
+
+				<IonToggle checked={true} onIonChange={(e) => {
+					setDisplayOnUpdate(e.detail.checked)
+				}}>Checked Toggle</IonToggle>
+
+
 				<ExploreContainer name="Tab 1 page" />
 				<div id="mapid" style={{height: "500px"}} ref={mapRef}></div>
 				<IonItem>

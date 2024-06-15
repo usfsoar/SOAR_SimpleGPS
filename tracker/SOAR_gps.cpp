@@ -1,3 +1,4 @@
+#include "_config.h"
 #include "SOAR_gps.h"
 
 SOAR_GPS::SOAR_GPS(int serial_bus, int RX, int TX) : 
@@ -7,7 +8,7 @@ SOAR_GPS::SOAR_GPS(int serial_bus, int RX, int TX) :
    }
 
 void SOAR_GPS::setup(){
-  // #if !FAKE_GPS 
+  #if !FAKE_GPS 
   GPSSerial->begin(9600, SERIAL_8N1, RX_PIN, TX_PIN);
   GPS->begin(9600);
 
@@ -15,13 +16,13 @@ void SOAR_GPS::setup(){
   GPS->sendCommand(PMTK_SET_NMEA_UPDATE_1HZ);
   GPS->sendCommand(PGCMD_ANTENNA);
   GPSSerial->println(PMTK_Q_RELEASE);
-  // #endif
+  #endif
   
 }
 
 
 void SOAR_GPS::GET_NMEA(char* nmea, bool *ready, bool *failed){
-  // #if FAKE_GPS
+  #if !FAKE_GPS
   char read = GPS->read();
   if(!GPS->newNMEAreceived()){
     *ready = false;
@@ -33,13 +34,14 @@ void SOAR_GPS::GET_NMEA(char* nmea, bool *ready, bool *failed){
   }
 
   char* gps_data = GPS->lastNMEA();
-  // #else
-  // *ready = true;
-  // *failed = false;
-  // char* gps_data = "$GNRMC, 181717.000,A,2805.5864,N,08210.5440,W,0.31,0.00,181123,,,A*6F";
+  #else
+  *ready = true;
+  *failed = false;
+  char* gps_data = "$GNRMC, 181717.000,A,2805.5864,N,08210.5440,W,0.31,0.00,181123,,,A*6F";
 
-  // #endif
+  #endif
 
+  Serial.println(gps_data);
   int comas = 0;
   for(char *p = gps_data; *p != '\0'; p++){
     if(*p == ','){

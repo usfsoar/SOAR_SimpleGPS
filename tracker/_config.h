@@ -6,6 +6,6 @@
 #define NO_BUZZ 0
 #define DEBUG_ALT 0
 #define DEBUG_CSV 0
-#define FAKE_GPS true
+#define FAKE_GPS false
 
 #endif // CONFIG_H
