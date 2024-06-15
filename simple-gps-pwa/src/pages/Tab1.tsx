@@ -1,10 +1,14 @@
-import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonItem, IonLabel, IonToggle} from "@ionic/react";
+import {IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonButton, IonItem, IonLabel, IonToggle, IonList} from "@ionic/react";
 import {useEffect, useRef, useState} from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import ExploreContainer from "../components/ExploreContainer";
 import "./Tab1.css";
 
+interface LoraLog{
+	gps_string: string;
+	time: string;
+}
 
 const Tab1: React.FC = () => {
 	const mapRef = useRef(null);
@@ -14,6 +18,7 @@ const Tab1: React.FC = () => {
 	const [writeCharacteristic, setWriteCharacteristic] = useState(null);
 	const [status, setStatus] = useState("Disconnected");
 	const [displayOnUpdate, setDisplayOnUpdate] = useState(true);
+	const [loraHistory, setLoraHistory] = useState<LoraLog[]>([]);
 
 	useEffect(() => {
 		if (mapRef.current && !mapInstance.current) {
@@ -67,7 +72,11 @@ const Tab1: React.FC = () => {
 		const value = new TextDecoder().decode(event.target.value);
 		console.log("Received data:", value);
 		// Value can be either ping or GPS data
-
+		var newLog:LoraLog = {
+			time: new Date().toUTCString(),
+			gps_string: value
+		}
+		setLoraHistory([...loraHistory,newLog]);
 		// 1. Determine if value is gps data or not
 		// if starts with "GS" then its GPS
 		if (value.slice(0, 2) == "GS") {
@@ -110,8 +119,10 @@ const Tab1: React.FC = () => {
 			// coordinates.lat = lat_deg;
 			// handleCoordinateChange
 			// coordinates.lng = long_deg;
-
-			if (mapInstance.current && displayOnUpdate) {
+			if(isNaN(lat_deg) || isNaN(long_deg)){
+				setStatus("NOT A FIX");
+			}
+			else if (mapInstance.current && displayOnUpdate) {
 				setCoordinates({lat: lat_deg, lng:long_deg});
 				const newLatLng = new L.LatLng(lat_deg, long_deg);
 				L.marker(newLatLng).addTo(mapInstance.current)
@@ -203,6 +214,13 @@ const Tab1: React.FC = () => {
 					Display
 				</IonButton>
 				<p>{status}</p>
+				<IonList>
+					{loraHistory.map((v, i)=>{
+						return <IonItem>
+							{v.time} : {v.gps_string}
+						</IonItem>
+					})}
+				</IonList>
 			</IonContent>
 		</IonPage>
 	);
